@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   xmlns:p="http://www.springframework.org/schema/p"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<!--  HandlerMapping -->
+	<bean id="handlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<value>
+				/index.html=indexController
+				/detail.html=detailController
+			</value>
+		</property>
+	</bean>	
+	
+	<!--  Controller -->
+	<!-- index.html 에 대한 요청이 들어오면 indexController를 실행시켜라는 것 -->
+	
+	<!-- 이 문장은, 위에 value에 /index.html=indexController가 있는 bean 태그 없을 때 쓰던 것.
+	위에서 적어줬으니 여기서 name속성 줄 필요 없음 
+	<bean id="indexController" name="/index.html" class="controller.IndexController" p:shopService-ref="shopService">
+	</bean>
+	-->
+	<bean id="indexController" class="controller.IndexController" p:shopService-ref="shopService">
+	</bean>
+	<bean id="detailController" class="controller.DetailController" p:shopService-ref="shopService">
+	</bean>
+	
+	<!-- - ViewResolver -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	
+	<!-- DataSource -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName">
+			<value>oracle.jdbc.driver.OracleDriver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:oracle:thin:@localhost:1521:xe</value>
+		</property>
+		<property name="username">
+			<value>hr</value>
+		</property>
+		<property name="password">
+			<value>1111</value>
+		</property>
+	</bean>
+	
+	
+	<!-- Shop -->
+	<bean id="shopService" class="logic.ShopImpl" p:itemCatalog-ref="itemCatalog">
+	</bean>
+	
+	<!-- Item Catalog -->
+	<bean id="itemCatalog" class="logic.ItemCatalogImpl" p:itemDao-ref="itemDao">
+	</bean>
+	
+	<!-- ItemDao -->
+	<bean id="itemDao" class="dao.ItemDaoImpl" p:dataSource-ref="dataSource">
+	</bean>
+	
+	
+	
+</beans>
