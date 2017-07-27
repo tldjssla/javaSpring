@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc
+	 http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	 http://www.springframework.org/schema/beans
+	 http://www.springframework.org/schema/beans/spring-beans.xsd
+	 http://www.springframework.org/schema/context
+	 http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing 
+		infrastructure -->
+
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+<!-- 	<annotation-driven />
+ -->
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
+		up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+	<context:component-scan base-package="com.lecto.shopping" />
+
+	<!-- HandlerMapping -->
+	<!-- 컨트롤러 되게 하는 것. 어노테이션... -->
+	<beans:bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+	
+	
+	<beans:bean id="handlerMapping"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<beans:property name="mappings">
+			<beans:value>
+				/index.html=indexController
+				/detail.html=detailController
+				/login.html=loginController
+			</beans:value>
+		</beans:property>
+	</beans:bean>
+	
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources 
+		in the /WEB-INF/views directory -->
+	<beans:bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<!-- Controller -->
+	<!-- index.html 에 대한 요청이 들어오면 indexController를 실행시켜라는 것 -->
+
+	<!-- 이 문장은, 위에 value에 /index.html=indexController가 있는 bean 태그 없을 때 쓰던 것. 
+		위에서 적어줬으니 여기서 name속성 줄 필요 없음 <bean id="indexController" name="/index.html" 
+		class="controller.IndexController" p:shopService-ref="shopService"> </bean> -->
+	<beans:bean id="indexController" class="controller.IndexController"
+		p:shopService-ref="shopService">
+	</beans:bean>
+	
+	<beans:bean id="detailController" class="controller.DetailController"
+		p:shopService-ref="shopService">
+	</beans:bean>
+	
+	<beans:bean id="loginController" class="controller.LoginFormController"
+		p:shopService-ref="shopService" p:loginValidator-ref="loginValidator"></beans:bean>
+
+	<!-- Shop -->
+	<beans:bean id="shopService" class="logic.ShopImpl" p:itemCatalog-ref="itemCatalog"
+		p:userCatalog-ref="userCatalog">
+	</beans:bean>
+
+	<!-- User Catalog -->
+	<beans:bean id="userCatalog" class="logic.UserCatalogImpl"
+		p:userDao-ref="userDao">
+	</beans:bean>
+
+	<!-- User Dao -->
+	<!-- sqlSession은 jdbc-config.xml에서 만든 것을 같이 쓰는 것 -->
+	<beans:bean id="userDao" class="dao.UserDaoImpl" p:sqlSession-ref="sqlSession">
+	</beans:bean>
+
+	<!-- Item Catalog -->
+	<beans:bean id="itemCatalog" class="logic.ItemCatalogImpl"
+		p:itemDao-ref="itemDao">
+	</beans:bean>
+
+	<!-- ItemDao -->
+	<beans:bean id="itemDao" class="dao.ItemDaoImpl" p:sqlSession-ref="sqlSession">
+	</beans:bean>
+
+	<!-- Validator -->
+	<beans:bean id="loginValidator" class="util.LoginValidator"></beans:bean>
+
+	<beans:bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<beans:property name="basenames">
+			<beans:list>
+				<beans:value>messages</beans:value>
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+
+</beans:beans>

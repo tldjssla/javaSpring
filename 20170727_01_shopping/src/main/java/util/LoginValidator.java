@@ -21,8 +21,8 @@ public class LoginValidator implements Validator {
 		}
 		
 		if(!StringUtils.hasLength(user.getPassword())) {
-			// 아이디를 입력하지 않고 로그인 요청을 한 경우
-			errors.rejectValue("userId", "error.required");
+			// 패스워드를 입력하지 않고 로그인 요청을 한 경우
+			errors.rejectValue("password", "error.required");
 		}
 		
 		if(errors.hasErrors()) {

@@ -16,7 +16,7 @@ import logic.User;
 public class LoginFormController {
 	private Shop shopService;
 	private Validator loginValidator;
-
+	
 	public void setShopService(Shop shopService) {
 		this.shopService = shopService;
 	}
@@ -35,27 +35,30 @@ public class LoginFormController {
 		return "login";
 	}
 	
-	@RequestMapping(method=RequestMethod.GET)
+	@RequestMapping(method=RequestMethod.POST)
 	public ModelAndView onSubmit(User user, BindingResult bindingResult) {
 		loginValidator.validate(user, bindingResult);
 		
 		ModelAndView modelAndView = new ModelAndView();
 		if(bindingResult.hasErrors()) {
 			modelAndView.getModel().putAll(bindingResult.getModel());
+			// login.jsp가 받는 것
 			return modelAndView;
 		}
 		
-		
 		try {
+			// loginSuccess.jsp가 받는 것
 			User loginUser = shopService.getUserByUserIdAndPassword(user.getUserId(), user.getPassword());
 			modelAndView.setViewName("loginSuccess");	// 파일명
-			modelAndView.addObject("loginUser",loginUser);			
+			modelAndView.addObject("loginUser",loginUser);
+			return modelAndView;
+
 		} catch(EmptyResultDataAccessException e) {
+			// 그냥 login.jsp가 받는 것
 			bindingResult.reject("error.login.user");
 			modelAndView.getModel().putAll(bindingResult.getModel());
-		}
-		
-		return modelAndView;
+			return modelAndView;
+		}		
 	}
 	
 }
