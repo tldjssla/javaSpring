@@ -27,6 +27,14 @@ public class DetailController {
 	// 하지만 get방식은, url에 뭔가 하는 것은 모두 get 방식 (href에 하건, url에 직접 입력, ....)
 	@RequestMapping
 	public ModelAndView detailItem(Integer itemId) {
+		
+		/*
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("main");
+		modelAndView.addObject("selPage","makeAccount_Form.jsp");
+		return modelAndView;
+		 */
+		
 		Item item = shopService.getItemByItemId(itemId);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("item", item);

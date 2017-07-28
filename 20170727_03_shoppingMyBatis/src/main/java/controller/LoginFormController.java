@@ -25,6 +25,11 @@ public class LoginFormController {
 		this.loginValidator = loginValidator;
 	}
 
+	// form 태그에서 ModelAttribute annotation을 써주면,
+	// 이 메소드를 찾아서 User 객체를 생성하고, 데이터를 셋해준다.
+	// 데이터는 form 태그 안에서 input 태그 안에 있는 데이터를 셋하며,
+	// 우리가 setter 메소드 호출을 직접하지 않기 때문에 input 태그의 path 속성의 value와 
+	// User 객체의 인스턴스 멤버 변수 명이 일치해야 한다.
 	@ModelAttribute
 	public User setUpForm() {
 		return new User(); // 서블릿 내부에서 쓰는게 아니라, login.jsp에서 annotation user를 찾을 때 쓰인다
@@ -46,19 +51,24 @@ public class LoginFormController {
 			// login.jsp가 받는 것
 			return modelAndView;
 		}
+		
+		try {
+			// loginSuccess.jsp가 받는 것
+			User loginUser = shopService.getUserByUserIdAndPassword(user.getUserId(), user.getPassword());
+			
+			if(loginUser == null) {
+				throw new EmptyResultDataAccessException(0);
+			}
+			
+			modelAndView.setViewName("loginSuccess");	// 파일명
+			modelAndView.addObject("loginUser",loginUser);
+			return modelAndView;
 
-		// loginSuccess.jsp가 받는 것
-		User loginUser = shopService.getUserByUserIdAndPassword(user.getUserId(), user.getPassword());
-
-		if (loginUser == null) {
+		} catch(EmptyResultDataAccessException e) {
+			// 그냥 login.jsp가 받는 것
 			bindingResult.reject("error.login.user");
 			modelAndView.getModel().putAll(bindingResult.getModel());
 			return modelAndView;
-		}
-
-		modelAndView.setViewName("loginSuccess"); // 파일명
-		modelAndView.addObject("loginUser", loginUser);
-		return modelAndView;
+		}		
 	}
-
 }
