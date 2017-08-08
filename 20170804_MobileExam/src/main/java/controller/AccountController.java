@@ -1,4 +1,4 @@
-package controller;
+﻿package controller;
 
 import java.util.List;
 
@@ -13,6 +13,11 @@ import service.BankService;
 
 @Controller
 public class AccountController {
+	/////////////////////////////////////////////////
+	// 2017.08.08 Sieon Mun requestion
+	//you'd better use @autowired annotation 
+	//spring offers dependency injection in framework
+	/////////////////////////////////////////////////
 	private BankService bankService;
 
 	public void setBankService(BankService bankService) {
@@ -44,6 +49,18 @@ public class AccountController {
 		// 이 파라미터는 어디서 set이 되서 들어오는 건지?
 		// 아까 설명할 때, 파라미터 어떻게 하면 된다고 말씀하셨는데, 
 		// 이까지 진행하지 못한 상황이여서 제대로 듣지 못했음
+		
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// 2017.08.08 Sieon Mun requestion
+		// @ModelAttribute 어노테이션에서 세팅을해준다.
+		// 1. 클라이언트 요청 (브라우저 http request)
+		// 2. web.xml -> servletdispatcher 및 spring framework 설정(현재 servlet-context.xml)을 통하여 현재 makeAccount메소드로 이동
+		// 3. 상단 어노테이션에서 설정된 값 불러옴 
+		// 쉽게말해서 <form> <input name="foo"> -> @modelAttribute fooVo vo <<< vo.setFoo(String foo) 같은느낌으로 세팅됨(이름명과 변수명 일치해야됨)
+		// @ModelAttribute에 대한 설명은 http://springmvc.egloos.com/535572를 참조하면 이해에 도움이 될 것 같음
+		//////////////////   		
+		// 현재 메소드에서 account 변수는 사용하지 않음으로 해당 지역변수는 제거해주는게 좋을 것 같음
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("main");
 		// get방식일 경우 우선 개설할 계좌 정보를 입력받는 페이지를 보여준다.
